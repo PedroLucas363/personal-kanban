@@ -8,6 +8,18 @@
 
 :root {
   font-size: 62.5%;
+
+  --dark-brown: #403937;
+  --brown: #756966;
+  --dark-purple: #7c3aed;
+  --purple: #cab3ff;
+  --light-purple: #e2d6ff;
+  --dark-gray: #505059;
+  --gray: #7c7c8a;
+  --light-gray: #c7c7cd;
+  --lighter-gray: #e3e3e3;
+  --white: #ffffff;
+  --off-white: #fbfaff;
 }
 
 body {
