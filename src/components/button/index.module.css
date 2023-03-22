@@ -1,0 +1,41 @@
+.button {
+  border: none;
+  outline: transparent;
+  border-radius: 0.5rem;
+  color: var(--white);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+
+  cursor: pointer;
+  font-size: medium;
+}
+
+.button:active {
+  opacity: 0.8;
+}
+
+.default {
+  background-color: var(--dark-purple);
+
+  padding: 0 3.2rem;
+
+  font-weight: 400;
+  font-size: 1.4rem;
+}
+
+.default:hover {
+  opacity: 0.8;
+}
+
+.default:active {
+  background-color: var(--purple);
+}
+
+.text {
+  background: none;
+  font-weight: 700;
+  font-size: 1.6rem;
+}
