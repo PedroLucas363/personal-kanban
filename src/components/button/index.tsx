@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes } from "react";
+import { ButtonHTMLAttributes, BaseSyntheticEvent } from "react";
 
 import styles from "./index.module.css";
 
@@ -8,6 +8,7 @@ type Props = ButtonHTMLAttributes<HTMLElement> & {
   text?: string;
   variant?: "default" | "text";
   size?: "large" | "small" | "normal";
+  onClick?: (e: BaseSyntheticEvent) => void;
 };
 
 function Button({
@@ -61,11 +62,19 @@ function Button({
     flexShrink: 0,
   };
 
+  const handleClick = (e: BaseSyntheticEvent) => {
+    if (props?.onClick) {
+      props?.onClick(e);
+    }
+    e.target.blur();
+  };
+
   return (
     <button
       {...props}
       className={`${styles.button} ${buttonVariant} ${props?.className}`}
       style={buttonStyle}
+      onClick={handleClick}
     >
       {icon && iconPosition === "left" ? (
         <i style={iconStyles}>{icon}</i>

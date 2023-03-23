@@ -32,10 +32,21 @@
 
 .default:active {
   background-color: var(--purple);
+  outline: none;
+}
+
+.default:focus:not(:active) {
+  outline: 2px solid var(--dark-purple);
+  outline-offset: 1px;
 }
 
 .text {
   background: none;
   font-weight: 700;
   font-size: 1.6rem;
+}
+
+.text:focus:not(:active) {
+  outline: 2px solid var(--light-purple);
+  outline-offset: 1px;
 }
