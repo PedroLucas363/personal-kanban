@@ -1,0 +1,29 @@
+.page {
+  width: 100%;
+  min-height: 100vh;
+
+  background-color: var(--dark-purple);
+
+  display: flex;
+
+  padding-top: 0.4rem;
+}
+
+.mainSection {
+  width: 100%;
+
+  border-top-left-radius: 3.2rem;
+
+  background-color: var(--off-white);
+}
+
+.soon {
+  height: 100%;
+
+  color: var(--dark-brown);
+  font-size: 6.4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.6rem;
+}

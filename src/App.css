@@ -1,4 +1,16 @@
 .App {
-  width: 100vw;
   height: 100vh;
+}
+
+::-webkit-scrollbar {
+  display: block;
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #7c3aed;
+  border-radius: 10px;
 }
