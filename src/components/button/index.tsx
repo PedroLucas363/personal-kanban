@@ -16,7 +16,7 @@ function Button({
   iconPosition = "left",
   text,
   variant = "default",
-  size = "normal",
+  size,
   ...props
 }: Props) {
   let buttonVariant;
@@ -45,8 +45,8 @@ function Button({
       iconSize = "24px";
       break;
     default:
-      height = "64px";
-      iconSize = "30px";
+      height = "54px";
+      iconSize = "24px";
   }
 
   const buttonStyle = {
