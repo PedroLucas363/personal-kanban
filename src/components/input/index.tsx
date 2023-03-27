@@ -2,7 +2,7 @@ import React, { InputHTMLAttributes } from "react";
 
 import styles from "./index.module.css";
 
-type Props = InputHTMLAttributes<HTMLElement> & {
+type Props = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   icon?: React.ReactElement;
   iconPosition?: "left" | "right";

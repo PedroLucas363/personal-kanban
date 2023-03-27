@@ -1,5 +1,6 @@
 import { HiPencil } from "react-icons/hi";
 import { IoFilter, IoSearch } from "react-icons/io5";
+import { v4 as uuidv4 } from "uuid";
 
 import {
   DragDropContext,
@@ -15,21 +16,40 @@ import Card from "../../../../../components/card";
 import Input from "../../../../../components/input";
 import styles from "./index.module.css";
 
-type Props = {
-  data: {
+export type Data = {
+  id: string;
+  title: string;
+  tasks: {
     id: string;
     title: string;
-    tasks: {
-      id: string;
-      title: string;
-      description: string;
-      tags: string[];
-    }[];
+    description: string;
+    tags: string[];
   }[];
-  onDragEnd: OnDragEndResponder;
 };
 
-function Content({ data, onDragEnd }: Props) {
+type Props = {
+  data: Data[];
+  onDragEnd: OnDragEndResponder;
+  filterValue: string;
+  onFilterValueChange: (value: string) => void;
+  allAvailableTags: string[];
+  isFilterTagsVisible: boolean;
+  onToggleIsFilterTagsVisible: () => void;
+  onSelectTag: (tag: string) => void;
+  filterTags: string[];
+};
+
+function Content({
+  data,
+  onDragEnd,
+  filterValue,
+  onFilterValueChange,
+  allAvailableTags,
+  isFilterTagsVisible,
+  onToggleIsFilterTagsVisible,
+  onSelectTag,
+  filterTags,
+}: Props) {
   return (
     <section className={styles.container}>
       <header className={styles.header}>
@@ -45,18 +65,40 @@ function Content({ data, onDragEnd }: Props) {
           className={styles.profilePicture}
         />
       </header>
-      <section className={styles.filter}>
-        <Button
-          text="Filtrar"
-          icon={<IoFilter size="100%" />}
-          iconPosition="left"
-          type="button"
-        />
-        <Input
-          placeholder="Busque por cards, assuntos ou responsáveis..."
-          icon={<IoSearch size={24} color={colors.darkGray} />}
-          iconPosition="left"
-        />
+      <section>
+        <div className={styles.filter}>
+          <Button
+            text="Filtrar"
+            icon={<IoFilter size="100%" />}
+            iconPosition="left"
+            type="button"
+            onClick={onToggleIsFilterTagsVisible}
+          />
+          <Input
+            placeholder="Busque por cards, assuntos ou responsáveis..."
+            icon={<IoSearch size={24} color={colors.darkGray} />}
+            iconPosition="left"
+            onChange={(e) => onFilterValueChange(e.target.value)}
+            value={filterValue}
+          />
+        </div>
+        <div
+          className={`${styles.filterTagsContainer} ${
+            isFilterTagsVisible ? styles.filterTagsVisible : ""
+          }`}
+        >
+          {allAvailableTags.map((tag) => (
+            <button
+              className={`${styles.tag} ${
+                filterTags.includes(tag) ? styles.selectedTag : ""
+              }`}
+              onClick={() => onSelectTag(tag)}
+              key={uuidv4()}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
       </section>
       <main>
         <DragDropContext onDragEnd={onDragEnd}>

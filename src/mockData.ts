@@ -17,14 +17,14 @@ export const cards = [
         title: "Manter a ofensiva 🔥",
         description:
           "Manter minha atividade na plataforma da Rocketseat para não perder a ofensiva",
-        tags: ["rocketseat", "desafio"],
+        tags: ["desafio", "bom hábito"],
       },
       {
         id: uuidv4(),
         title: "Almoçar 🥗",
         description:
           "Me alimentar, aproveitando um momento de descanso para recarregar minhas energias durante o almoço",
-        tags: ["rocketseat", "desafio"],
+        tags: ["bom hábito"],
       },
     ],
   },
@@ -44,7 +44,7 @@ export const cards = [
         title: "Ser incrível 😎",
         description:
           "Sempre me lembrar de manter minha autenticidade e espalhar amor",
-        tags: ["rocketseat", "desafio"],
+        tags: ["desafio", "bom hábito"],
       },
     ],
   },
