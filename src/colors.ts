@@ -10,4 +10,5 @@ export default {
   lighterGray: "var(--lighter-gray)",
   white: "var(--white)",
   offWhite: "var(--off-white)",
+  error: "var(--error)",
 };

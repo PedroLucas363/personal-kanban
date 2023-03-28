@@ -114,3 +114,8 @@
   color: var(--light-purple);
   background-color: var(--dark-purple);
 }
+
+.addButton {
+  margin-top: 2.4rem;
+  background-color: var(--light-purple);
+}

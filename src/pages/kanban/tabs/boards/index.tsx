@@ -1,74 +1,42 @@
 import { useEffect, useState } from "react";
 import { DropResult } from "react-beautiful-dnd";
 
-import { cards } from "../../../../mockData";
-import Content, { Data } from "./content";
+import Content from "./content";
 
-const getInitialTagsAvailable = () => {
-  const tags: Record<string, boolean> = {};
-
-  cards.forEach((card) =>
-    card.tasks.forEach((task) => {
-      task.tags.forEach((tag) => {
-        if (!tags[tag]) tags[tag] = true;
-      });
-    })
-  );
-  return Object.keys(tags);
-};
+import {
+  editCard,
+  listColumns,
+  listTags,
+  removeCard,
+  updateCardPosition,
+  createNewCard,
+} from "../../../../fake-api";
+import { Column, EditCardPayload } from "../../../../types";
 
 function BoardSection() {
-  const [data, setData] = useState(cards);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [filterValue, setFilterValue] = useState("");
-  const [filteredData, setFilteredData] = useState<Data[] | null>(null);
+  const [filteredColumns, setFilteredColumns] = useState<Column[] | null>(null);
   const [isFilterTagsVisible, setIsFilterTagsVisible] = useState(false);
-  const [allAvailableTags, setAllAvailableTags] = useState<string[]>(
-    getInitialTagsAvailable()
-  );
+  const [allAvailableTags, setAllAvailableTags] = useState<string[]>([]);
   const [filterTags, setFilterTags] = useState<string[]>([]);
+  const [isEditingCard, setIsEditingCard] = useState("");
 
-  const handleDragEnd = (result: DropResult) => {
+  const handleDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
     const { source, destination } = result;
+    const payload = {
+      currentIndex: source.index,
+      destinationIndex: destination.index,
+      currentColumnId: source.droppableId,
+      destinationColumnId: destination.droppableId,
+    };
 
-    if (source.droppableId === destination.droppableId) {
-      setData((prev) => {
-        const newData = [...prev];
-        const sourceColIndex = newData.findIndex(
-          (e) => e.id === source.droppableId
-        );
-        const sourceCol = newData[sourceColIndex];
-        const sourceTask = [...sourceCol.tasks];
-
-        const [removed] = sourceTask.splice(source.index, 1);
-        sourceTask.splice(destination.index, 0, removed);
-
-        newData[sourceColIndex].tasks = sourceTask;
-        return newData;
-      });
-    } else {
-      setData((prev) => {
-        const newData = [...prev];
-        const sourceColIndex = newData.findIndex(
-          (e) => e.id === source.droppableId
-        );
-        const destinationColIndex = newData.findIndex(
-          (e) => e.id === destination.droppableId
-        );
-
-        const sourceCol = newData[sourceColIndex];
-        const destinationCol = newData[destinationColIndex];
-
-        const sourceTask = [...sourceCol.tasks];
-        const destinationTask = [...destinationCol.tasks];
-
-        const [removed] = sourceTask.splice(source.index, 1);
-        destinationTask.splice(destination.index, 0, removed);
-
-        newData[sourceColIndex].tasks = sourceTask;
-        newData[destinationColIndex].tasks = destinationTask;
-        return newData;
-      });
+    try {
+      const response = await updateCardPosition(payload);
+      setColumns(response.data);
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -92,8 +60,8 @@ function BoardSection() {
   useEffect(() => {
     if (filterValue.trim() === "") {
       if (filterTags.length) {
-        setFilteredData(
-          data.map((column) => ({
+        setFilteredColumns(
+          columns.map((column) => ({
             ...column,
             tasks: column.tasks.filter((task) =>
               filterTags
@@ -103,11 +71,11 @@ function BoardSection() {
           }))
         );
       } else {
-        setFilteredData(null);
+        setFilteredColumns(null);
       }
     } else {
-      setFilteredData(
-        data.map((column) => ({
+      setFilteredColumns(
+        columns.map((column) => ({
           ...column,
           tasks: column.tasks.filter((task) => {
             return (
@@ -128,9 +96,107 @@ function BoardSection() {
     }
   }, [filterValue, filterTags]);
 
+  const fetchColumns = async () => {
+    try {
+      const response = await listColumns();
+      setColumns(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchTags = async () => {
+    try {
+      const response = await listTags();
+      setAllAvailableTags(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    fetchColumns();
+
+    fetchTags();
+  }, []);
+
+  const handleClickAddCard = (columnId: string) => {
+    setIsEditingCard("newCard");
+    setColumns((prev) => {
+      const newColumns = [...prev];
+      const destinationColumnIndex = newColumns.findIndex(
+        (column) => column.id === columnId
+      );
+      const destinationColumn = newColumns[destinationColumnIndex];
+      const destinationTasks = [...destinationColumn.tasks];
+
+      const newCard = {
+        id: "newCard",
+        title: "",
+        description: "",
+        tags: [],
+      };
+      destinationTasks.push(newCard);
+      newColumns[destinationColumnIndex].tasks = destinationTasks;
+      return newColumns;
+    });
+  };
+
+  const handleClickEditCard = async (id: string) => {
+    setIsEditingCard(id);
+  };
+
+  const handleCancelCardEdition = () => {
+    if (isEditingCard === "newCard") {
+      setColumns((prev) => {
+        const newColumns = [...prev];
+        const destinationColumnIndex = newColumns.findIndex((column) =>
+          column.tasks.some((task) => task.id === isEditingCard)
+        );
+        const destinationColumn = newColumns[destinationColumnIndex];
+        const destinationTasks = [...destinationColumn.tasks];
+
+        newColumns[destinationColumnIndex].tasks = destinationTasks.filter(
+          (task) => task.id !== "newCard"
+        );
+        return newColumns;
+      });
+    }
+    setIsEditingCard("");
+  };
+
+  const handleSaveCardEdition = async (
+    payload: EditCardPayload,
+    columnId: string
+  ) => {
+    try {
+      if (payload.id === "newCard") {
+        const response = await createNewCard(columnId, payload);
+        setColumns(response.data);
+        fetchTags();
+      } else {
+        const response = await editCard(isEditingCard, payload);
+        setColumns(response.data);
+        fetchTags();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    setIsEditingCard("");
+  };
+
+  const handleRemoveCard = async (cardId: string) => {
+    try {
+      const response = await removeCard(cardId);
+      setColumns(response.data);
+      fetchTags();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <Content
-      data={filteredData || data}
+      data={filteredColumns || columns}
       onDragEnd={handleDragEnd}
       filterValue={filterValue}
       onFilterValueChange={handleFilterValueChange}
@@ -139,6 +205,12 @@ function BoardSection() {
       onToggleIsFilterTagsVisible={handleToggleIsFilterTagsVisible}
       onSelectTag={handleSelectTag}
       filterTags={filterTags}
+      onClickAddCard={handleClickAddCard}
+      isEditingCardId={isEditingCard}
+      onClickEditCard={handleClickEditCard}
+      onCancelCardEdition={handleCancelCardEdition}
+      onSaveCardEdition={handleSaveCardEdition}
+      onRemoveCard={handleRemoveCard}
     />
   );
 }

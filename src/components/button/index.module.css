@@ -13,6 +13,12 @@
   font-size: medium;
 }
 
+.button > i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .button:active {
   opacity: 0.8;
 }

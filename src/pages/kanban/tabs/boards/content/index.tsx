@@ -1,4 +1,4 @@
-import { HiPencil } from "react-icons/hi";
+import { HiPencil, HiPlus } from "react-icons/hi";
 import { IoFilter, IoSearch } from "react-icons/io5";
 import { v4 as uuidv4 } from "uuid";
 
@@ -15,20 +15,11 @@ import Button from "../../../../../components/button";
 import Card from "../../../../../components/card";
 import Input from "../../../../../components/input";
 import styles from "./index.module.css";
-
-export type Data = {
-  id: string;
-  title: string;
-  tasks: {
-    id: string;
-    title: string;
-    description: string;
-    tags: string[];
-  }[];
-};
+import { Column, EditCardPayload } from "../../../../../types";
+import FormCard from "../../../../../components/form-card";
 
 type Props = {
-  data: Data[];
+  data: Column[];
   onDragEnd: OnDragEndResponder;
   filterValue: string;
   onFilterValueChange: (value: string) => void;
@@ -37,6 +28,15 @@ type Props = {
   onToggleIsFilterTagsVisible: () => void;
   onSelectTag: (tag: string) => void;
   filterTags: string[];
+  onClickAddCard: (columnId: string) => void;
+  isEditingCardId: string;
+  onClickEditCard: (id: string) => Promise<void>;
+  onCancelCardEdition: () => void;
+  onSaveCardEdition: (
+    payload: EditCardPayload,
+    columnId: string
+  ) => Promise<void>;
+  onRemoveCard: (id: string) => Promise<void>;
 };
 
 function Content({
@@ -49,6 +49,12 @@ function Content({
   onToggleIsFilterTagsVisible,
   onSelectTag,
   filterTags,
+  onClickAddCard,
+  isEditingCardId,
+  onClickEditCard,
+  onCancelCardEdition,
+  onSaveCardEdition,
+  onRemoveCard,
 }: Props) {
   return (
     <section className={styles.container}>
@@ -138,22 +144,44 @@ function Content({
                                 opacity: cardSnapshot.isDragging ? "0.5" : "1",
                               }}
                             >
-                              <Card
-                                title={task.title}
-                                description={task.description}
-                                tags={task.tags}
-                                style={{
-                                  boxShadow: sectionSnapshot.isDraggingOver
-                                    ? "none"
-                                    : undefined,
-                                }}
-                              />
+                              {isEditingCardId === task.id ? (
+                                <FormCard
+                                  id={task.id}
+                                  columnId={section.id}
+                                  initialValues={{
+                                    ...task,
+                                  }}
+                                  onCancelEdition={onCancelCardEdition}
+                                  onSave={onSaveCardEdition}
+                                />
+                              ) : (
+                                <Card
+                                  id={task.id}
+                                  title={task.title}
+                                  description={task.description}
+                                  tags={task.tags}
+                                  style={{
+                                    boxShadow: sectionSnapshot.isDraggingOver
+                                      ? "none"
+                                      : undefined,
+                                  }}
+                                  onClickEditCard={onClickEditCard}
+                                  onRemoveCard={onRemoveCard}
+                                />
+                              )}
                             </div>
                           )}
                         </Draggable>
                       ))}
                       {provided.placeholder}
                     </div>
+                    <Button
+                      icon={<HiPlus size={20} color={colors.darkPurple} />}
+                      title="Adicionar novo card"
+                      size="small"
+                      className={styles.addButton}
+                      onClick={() => onClickAddCard(section.id)}
+                    />
                   </div>
                 )}
               </Droppable>

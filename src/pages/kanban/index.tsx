@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import LateralMenu from "../../components/lateral-menu";
 import { TABS } from "../../enums";
@@ -7,6 +7,7 @@ import { Tabs } from "../../types";
 import BoardSection from "./tabs/boards/index";
 import { IoConstruct } from "react-icons/io5";
 import colors from "../../colors";
+import { startFakeApi } from "../../fake-api";
 
 function KanbanPage() {
   const [currentTab, setCurrentTab] = useState<Tabs>(TABS.BOARDS);
@@ -37,6 +38,10 @@ function KanbanPage() {
         );
     }
   };
+
+  useEffect(() => {
+    startFakeApi();
+  }, []);
 
   const handleTabChange = (tab: Tabs) => {
     setCurrentTab(tab);
