@@ -29,4 +29,6 @@
 
 body {
   font-size: 1.6rem;
+  display: inline-block;
+  min-width: 100vw;
 }
