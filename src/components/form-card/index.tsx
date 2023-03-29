@@ -41,8 +41,10 @@ function FormCard({
   const handleChangeTags = (value: string) => {
     if (value.includes("\n")) {
       const formattedValue = value.trim().replace("\n", "");
-      setTags((prev) => [...prev, formattedValue]);
-      setCurrentTag("");
+      if (formattedValue.length) {
+        setTags((prev) => [...prev, formattedValue]);
+        setCurrentTag("");
+      }
     } else {
       setCurrentTag(value);
     }
