@@ -81,7 +81,7 @@ function Content({
             onClick={onToggleIsFilterTagsVisible}
           />
           <Input
-            placeholder="Busque por cards, assuntos ou responsáveis..."
+            placeholder="Busque por os cards pelo título ou descrição"
             icon={<IoSearch size={24} color={colors.darkGray} />}
             iconPosition="left"
             onChange={(e) => onFilterValueChange(e.target.value)}
