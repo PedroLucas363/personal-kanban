@@ -4,7 +4,7 @@ import { columns as MockColumns } from "../mockData";
 
 import { Column, EditCardPayload } from "../types";
 
-export const startFakeApi = (): void => {
+export const startFakeApi = async (): Promise<void> => {
   const columns = localStorage.getItem("kanbanColumns");
   if (columns) {
     const parsedColumn: Column[] = JSON.parse(columns);
